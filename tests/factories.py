@@ -29,10 +29,6 @@ class SubmissionFactory(factory.django.DjangoModelFactory):
     creation_time = timezone.now()
 
 
-class EvernoteAccountFactory(factory.django.DjangoModelFactory):
-    FACTORY_FOR = 'evernote_auth.EvernoteAccount'
-
-
 class UserFactory(factory.django.DjangoModelFactory):
     FACTORY_FOR = 'accounts.User'
 
