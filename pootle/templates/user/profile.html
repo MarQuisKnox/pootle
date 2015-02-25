@@ -1,5 +1,5 @@
 {% extends 'user/base.html'  %}
-{% load humanize i18n profile_tags assets %}
+{% load humanize i18n assets %}
 
 {% block body_id %}profile-page{% endblock %}
 
@@ -10,7 +10,7 @@
 <div id="user-profile" lang="{{ LANGUAGE_CODE }}">
 
   <div id="user-meta">
-    <img src="{{ object|gravatar:150 }}" width="150" height="150"
+    <img src="{{ object.avatar_url }}" width="150" height="150"
     {% if user == object %} title="{% trans "You can set or change your avatar image at www.gravatar.com" %}"{% endif %} />
     <h1 class="user-name">
       {% if object.is_anonymous %}

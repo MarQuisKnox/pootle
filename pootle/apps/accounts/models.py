@@ -50,6 +50,7 @@ from .managers import UserManager
 
 
 CURRENCIES = (('USD', 'USD'), ('EUR', 'EUR'), ('CNY', 'CNY'), ('JPY', 'JPY'))
+GRAVATAR_URL = "https://secure.gravatar.com/avatar/%(hash)s?s=%(size)d&d=mm"
 
 
 def _humanize_score(score):
@@ -150,6 +151,24 @@ class User(AbstractBaseUser):
         return 'https://twitter.com/{0}'.format(self.twitter)
 
     @cached_property
+    def avatar_url(self):
+        for socialaccount in self.socialaccount_set.all():
+            avatar = socialaccount.get_avatar_url()
+            if avatar:
+                return avatar
+
+        # Fall back to Gravatar
+        if not self.email:
+            return ""
+
+        try:
+            email_hash = md5(self.email).hexdigest()
+        except UnicodeEncodeError:
+            return ""
+
+        return GRAVATAR_URL % {"hash": email_hash, "size": 150}
+
+    @cached_property
     def is_meta(self):
         """Returns `True` if this is a special fake user."""
         meta_users = UserManager.META_USERS
@@ -157,13 +176,6 @@ class User(AbstractBaseUser):
             meta_users += settings.POOTLE_META_USERS
 
         return self.username in meta_users
-
-    @cached_property
-    def email_hash(self):
-        try:
-            return md5(self.email).hexdigest()
-        except UnicodeEncodeError:
-            return None
 
     @classmethod
     def get(cls, user):
@@ -277,13 +289,6 @@ class User(AbstractBaseUser):
     def email_user(self, subject, message, from_email=None):
         """Sends an email to this user."""
         send_mail(subject, message, from_email, [self.email])
-
-    def gravatar_url(self, size=80):
-        if not self.email_hash:
-            return ''
-
-        return 'https://secure.gravatar.com/avatar/%s?s=%d&d=mm' % \
-            (self.email_hash, size)
 
     def get_unit_rows(self):
         return min(max(self.unit_rows, 5), 49)

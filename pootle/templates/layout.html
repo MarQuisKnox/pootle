@@ -1,4 +1,4 @@
-{% load i18n assets baseurl locale profile_tags humanize staticfiles %}
+{% load i18n assets baseurl locale humanize staticfiles %}
 {% get_current_language as LANGUAGE_CODE %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}" dir="{% locale_dir %}" id="{% block html_id %}pootle-base{% endblock %}" class="{{ settings.POOTLE_INSTANCE_ID }}">
@@ -113,7 +113,7 @@
           {% if user.is_authenticated %}
           <li id="user" class="js-navbar-dropdown">
             <a href="{{ user.get_absolute_url }}" data-action="toggle">
-              <img src="{{ user|gravatar:20 }}" />
+              <img src="{{ user.avatar_url }}" />
               <span>{{ user.display_name }}</span>
               <span class="odometer js-score">{{ user.public_score|intcomma }}</span>
             </a>
